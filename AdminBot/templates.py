@@ -1,7 +1,7 @@
 # Description: This file contains all the templates used in the bot.
 from config import LANG, VERSION, API_PATH
 from AdminBot.content import MESSAGES
-from Utils import api, utils 
+from Utils import api, utils
 import datetime
 import urllib.parse
 
@@ -29,6 +29,8 @@ def user_info_template(usr, server, header=""):
 """
 
 # Server Info Message Template
+
+
 def server_info_template(server, plans, header=""):
     plans_num = 0
     user_index = 0
@@ -51,6 +53,8 @@ def server_info_template(server, plans, header=""):
 """
 
 # Plan Info Message Template
+
+
 def plan_info_template(plan, orders, header=""):
     num_orders = 0
     if orders:
@@ -70,6 +74,8 @@ def plan_info_template(plan, orders, header=""):
 """
 
 # Users List Message Template
+
+
 def users_list_template(users, heder=""):
     # Number of Online Users
     online_users = 0
@@ -91,7 +97,7 @@ def bot_users_list_template(users, wallets, orders, header=""):
 
     users_get_free = 0
     ordered_users = 0
-    total_balance_wallets= 0
+    total_balance_wallets = 0
     if wallets:
         for wallet in wallets:
             total_balance_wallets += wallet['balance']
@@ -107,7 +113,6 @@ def bot_users_list_template(users, wallets, orders, header=""):
         for user in users:
             if user['test_subscription']:
                 users_get_free += 1
-        
 
     return f"""
 {header}
@@ -120,6 +125,8 @@ def bot_users_list_template(users, wallets, orders, header=""):
 """
 
 # Bot Users Info Message Template
+
+
 def bot_users_info_template(user, orders, payments, wallet, non_order_subs, order_subs, plans, header=""):
     total_orders = 0
     total_payment = 0
@@ -140,7 +147,8 @@ def bot_users_info_template(user, orders, payments, wallet, non_order_subs, orde
                         break
     if payments:
         total_payment = len(payments)
-        approved_payments = [payment for payment in payments if payment['approved'] == 1]
+        approved_payments = [
+            payment for payment in payments if payment['approved'] == 1]
         if approved_payments:
             approved_payment = len(approved_payments)
     if non_order_subs:
@@ -157,7 +165,9 @@ def bot_users_info_template(user, orders, payments, wallet, non_order_subs, orde
 {header}
 {MESSAGES['INFO_USER_NAME']}{name}
 {MESSAGES['INFO_USER_USERNAME']}{username}
-{MESSAGES['INFO_USER_NUM_ID']}{user['telegram_id']}
+{MESSAGES['INFO_USER_NUM_ID']} {user['telegram_id']}
+{MESSAGES['chat_open']}
+{MESSAGES['direct_message_link']}{user['telegram_id']}
 {MESSAGES['GET_FREE_TEST_STATUS']}{free_test_status}
 {MESSAGES['WALLET_BALANCE']}{utils.rial_to_toman(total_balance)}{MESSAGES['TOMAN']}
 ❖⬩╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍⬩❖
@@ -172,6 +182,8 @@ def bot_users_info_template(user, orders, payments, wallet, non_order_subs, orde
 """
 
 # Bot Users Order Info Message Template
+
+
 def bot_orders_info_template(order, plan, user, server, header=""):
     name = user['full_name'] if user['full_name'] else user['telegram_id']
     username = f"@{user['username']}" if user['username'] else MESSAGES['NOT_SET']
@@ -182,7 +194,8 @@ def bot_orders_info_template(order, plan, user, server, header=""):
 {MESSAGES['BOT_ORDER_DATE']}{order['created_at']}
 {MESSAGES['INFO_USER_NAME']}<b>{name}</b>
 {MESSAGES['INFO_USER_USERNAME']}{username}
-{MESSAGES['INFO_USER_NUM_ID']}{user['telegram_id']}
+{MESSAGES['chat_open']}
+{MESSAGES['direct_message_link']}{user['telegram_id']}
 ❖⬩╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍⬩❖
 {MESSAGES['ORDERED_VALUME']}{plan['size_gb']}
 {MESSAGES['ORDERED_DAYS']}{plan['days']}
@@ -193,11 +206,16 @@ def bot_orders_info_template(order, plan, user, server, header=""):
 """
 
 # Payment Received Template - Send to Admin
-def bot_payment_info_template(payment,user, header="", footer=""):
-    #approved = "✅" if payment['approved'] else "❌"
-    if payment['approved']: approved = "✅"
-    elif payment['approved'] == False: approved = "❌"
-    else: approved = "⏳"
+
+
+def bot_payment_info_template(payment, user, header="", footer=""):
+    # approved = "✅" if payment['approved'] else "❌"
+    if payment['approved']:
+        approved = "✅"
+    elif payment['approved'] == False:
+        approved = "❌"
+    else:
+        approved = "⏳"
     username = f"@{user['username']}" if user['username'] else MESSAGES['NOT_SET']
     name = user['full_name'] if user['full_name'] else user['telegram_id']
     return f"""
@@ -206,7 +224,8 @@ def bot_payment_info_template(payment,user, header="", footer=""):
 {MESSAGES['PAYMENTS_ID']} <code>{payment['id']}</code>
 {MESSAGES['INFO_USER_NAME']} <b>{name}</b>
 {MESSAGES['INFO_USER_USERNAME']} {username}
-{MESSAGES['INFO_USER_NUM_ID']} {user['telegram_id']}
+{MESSAGES['chat_open']}
+{MESSAGES['direct_message_link']}{user['telegram_id']}
 {MESSAGES['BOT_PAYMENT_DATE']} {payment['created_at']}
 {MESSAGES['PAIED_AMOUNT']} <b>{utils.rial_to_toman(payment['payment_amount'])}</b> {MESSAGES['TOMAN']}
 ❖⬩╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍⬩❖
@@ -217,18 +236,22 @@ def bot_payment_info_template(payment,user, header="", footer=""):
 """
 
 # Bot Users List Message Template
+
+
 def bot_orders_list_template(orders, plans, header=""):
 
     total_orders = 0
     total_valume = 0
     total_sales = 0
     last30day = datetime.datetime.now() - datetime.timedelta(days=30)
-    last30days_orders = [order for order in orders if datetime.datetime.strptime(order['created_at'], "%Y-%m-%d %H:%M:%S") >= last30day]
+    last30days_orders = [order for order in orders if datetime.datetime.strptime(
+        order['created_at'], "%Y-%m-%d %H:%M:%S") >= last30day]
     last30days_num_orders = 0
     last30days_valume = 0
     last30days_sales = 0
     first_day_this_month = datetime.datetime.today().replace(day=1)
-    this_month_orders = [order for order in orders if datetime.datetime.strptime(order['created_at'], "%Y-%m-%d %H:%M:%S") >= first_day_this_month]
+    this_month_orders = [order for order in orders if datetime.datetime.strptime(
+        order['created_at'], "%Y-%m-%d %H:%M:%S") >= first_day_this_month]
     this_month_num_orders = 0
     this_month_valume = 0
     this_month_sales = 0
@@ -259,7 +282,6 @@ def bot_orders_list_template(orders, plans, header=""):
                         this_month_valume += plan['size_gb']
                         this_month_sales += plan['price']
                         break
-        
 
     return f"""
 {header}
@@ -278,33 +300,36 @@ def bot_orders_list_template(orders, plans, header=""):
 """
 
 # Bot Users List Message Template
+
+
 def bot_payments_list_template(payments, header=""):
 
     total_payments = 0
     total_amount = 0
     last30day = datetime.datetime.now() - datetime.timedelta(days=30)
-    last30days_payments  = [payment for payment in payments if datetime.datetime.strptime(payment['created_at'], "%Y-%m-%d %H:%M:%S") >= last30day]
+    last30days_payments = [payment for payment in payments if datetime.datetime.strptime(
+        payment['created_at'], "%Y-%m-%d %H:%M:%S") >= last30day]
     last30days_num_payments = 0
     last30days_amount = 0
     first_day_this_month = datetime.datetime.today().replace(day=1)
-    this_month_orders = [payment for payment in payments if datetime.datetime.strptime(payment['created_at'], "%Y-%m-%d %H:%M:%S") >= first_day_this_month]
+    this_month_orders = [payment for payment in payments if datetime.datetime.strptime(
+        payment['created_at'], "%Y-%m-%d %H:%M:%S") >= first_day_this_month]
     this_month_num_payments = 0
     this_month_amount = 0
     if payments:
         total_payments = len(payments)
         for payment in payments:
-                total_amount += payment['payment_amount']
+            total_amount += payment['payment_amount']
 
     if last30days_payments:
         last30days_num_payments = len(last30days_payments)
         for payment in last30days_payments:
-                last30days_amount += payment['payment_amount']
+            last30days_amount += payment['payment_amount']
 
     if this_month_orders:
         this_month_num_payments = len(this_month_orders)
         for payment in this_month_orders:
-                this_month_amount += payment['payment_amount']
-        
+            this_month_amount += payment['payment_amount']
 
     return f"""
 {header}
@@ -320,13 +345,16 @@ def bot_payments_list_template(payments, header=""):
 """
 
 # Configs List Message Template
+
+
 def configs_template(configs):
     messages = []
     result = []
     chunk_size = 5
 
     for config in configs:
-       messages.append(f"<b>{urllib.parse.unquote(config[1])}</b>\n<code>{config[0]}</code>\n")
+        messages.append(
+            f"<b>{urllib.parse.unquote(config[1])}</b>\n<code>{config[0]}</code>\n")
 
     for i in range(0, len(messages), chunk_size):
         chunk = messages[i:i + chunk_size]

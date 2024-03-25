@@ -212,7 +212,10 @@
     "WALLET_BALANCE_CHANGED_BY_ADMIN_P1": "💰Wallet balance changed to",
     "WALLET_BALANCE_CHANGED_BY_ADMIN_P2": "by admin",
     "SUCCESS_BAN_USER": "✅User banned",
-    "SUCCESS_UNBAN_USER": "✅User unbanned"
+    "SUCCESS_UNBAN_USER": "✅User unbanned",
+    "direct_message_link": "tg://openmessage?user_id=",
+    "chat_open": "⬖ user chat link:"
+
   },
   "FA": {
     "WELCOME": "به ربات مدیریت هیدی بات خوش آمدید.",
@@ -427,6 +430,8 @@
     "WALLET_BALANCE_CHANGED_BY_ADMIN_P1": "💰موجودی کیف پول شما توسط مدیر به",
     "WALLET_BALANCE_CHANGED_BY_ADMIN_P2": "تومان تغییر یافت",
     "SUCCESS_BAN_USER": "✅کاربر مسدود شد",
-    "SUCCESS_UNBAN_USER": "✅کاربر مسدود شده، آزاد شد"
+    "SUCCESS_UNBAN_USER": "✅کاربر مسدود شده، آزاد شد",
+    "direct_message_link": "tg://openmessage?user_id=",
+    "chat_open": "⬖ لینک چت کاربر:"
   }
 }
