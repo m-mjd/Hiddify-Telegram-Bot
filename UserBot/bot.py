@@ -407,23 +407,6 @@ def next_step_send_name_for_buy_from_wallet(message: Message, plan):
         return
     wallet = USERS_DB.find_wallet(telegram_id=message.chat.id)
     if wallet:
-        def get_link_force():
-            sub = utils.sub_links(value)
-            if not sub:
-                bot.send_message(call.message.chat.id, MESSAGES['UNKNOWN_ERROR'])
-                return
-            qr_code = utils.txt_to_qr(sub['sub_link_auto'])
-            if not qr_code:
-                bot.send_message(call.message.chat.id, MESSAGES['UNKNOWN_ERROR'])
-                return
-            bot.send_photo(
-                call.message.chat.id,
-                photo=qr_code,
-                caption=f"{KEY_MARKUP['CONFIGS_SUB_AUTO']}\n<code>{sub['sub_link_auto']}</code>",
-                reply_markup=main_menu_keyboard_markup()
-            )
-
-
         wallet = wallet[0]
         wallet_balance = int(wallet['balance']) - int(paid_amount)
         user_info = USERS_DB.edit_wallet(message.chat.id, balance=wallet_balance)
@@ -434,7 +417,7 @@ def next_step_send_name_for_buy_from_wallet(message: Message, plan):
             return
     bot.send_message(message.chat.id,
                      f"{MESSAGES['PAYMENT_CONFIRMED']}\n{MESSAGES['ORDER_ID']} {order_id}",
-                     reply_markup=main_menu_keyboard_markup(get_link_force()))
+                     reply_markup=main_menu_keyboard_markup())
     
     user_info = api.find(URL, value)
     user_info = utils.users_to_dict([user_info])
