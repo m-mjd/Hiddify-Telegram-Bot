@@ -59,7 +59,7 @@ function reinstall_bot() {
       rm -rf /opt/Hiddify-Telegram-Bot
 
       # Run the installation script
-      bash -c "$(curl -Lfo- https://raw.githubusercontent.com/B3H1Z/Hiddify-Telegram-Bot/main/install.sh)"
+      bash -c "$(curl -Lfo- https://raw.githubusercontent.com/m-mjd/Hiddify-Telegram-Bot/main/install.sh)"
 
       display_message "${GREEN}Bot has been reinstalled.${RESET}"
       ;;
