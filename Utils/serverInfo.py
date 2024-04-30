@@ -1,25 +1,34 @@
-# Thanks to https://github.com/m-mjd/hiddybot_info_severs
-import sqlite3
-from urllib.parse import urlparse
 import requests
-from Database.dbManager import USERS_DB
+import json
+import logging
+from urllib.parse import urlparse
+import datetime
+import Utils
+
+
+def get_admin_uuid_from_url(url):
+    try:
+        parsed_url = urlparse(url)
+        admin_uuid = parsed_url.path.split('/')[2]
+        return admin_uuid
+    except Exception as e:
+        logging.error("Error extracting admin_uuid from URL: %s" % e)
+        return None
 
 
 def scrape_data_from_json_url(url):
     try:
-        response = requests.get(url)
+        admin_uuid = get_admin_uuid_from_url(url)
+        if not admin_uuid:
+            return None
+        response = requests.get(
+            f"{url}/admin/get_data/", headers={'Hiddify-API-Key': admin_uuid})
         response.raise_for_status()
-
-        # Parse JSON data
         json_data = response.json()
-
-        # Extract information from JSON using the shared function
         extracted_data = json_template(json_data)
-
         return extracted_data
-
     except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
+        logging.error(f"Error scraping data from URL: {e}")
         return None
 
 
@@ -100,10 +109,9 @@ def json_template(data):
     }
 
 
-
 def server_status_template(result, server_name):
     lline = (32 * "-")
-    
+
     bytes_recv = result.get('bytes_recv', 'N/A')
     bytes_recv_cumulative = result.get('bytes_recv_cumulative', 'N/A')
     bytes_sent = result.get('bytes_sent', 'N/A')
@@ -152,21 +160,23 @@ def server_status_template(result, server_name):
     formatted_bytes_sent = f"{bytes_sent / (1024 ** 2):.2f} MB" if bytes_sent != 'N/A' else 'N/A'
     # Add information for all servers
     return f"<b>Server: {server_name}</b>\n{lline}\n" \
-                       f"<b>SYSTEM INFO</b>\n"\
-                       f"CPU: {cpu_percent}% - {number_of_cores} CORE\n" \
-                       f"RAM: {ram_used:.2f} GB / {ram_total:.2f} GB ({ram_percent:.2f}%)\n" \
-                       f"DISK: {disk_used:.2f} GB / {disk_total:.2f} GB  ({disk_percent:.2f}%)\n\n" \
-                       f"<b>NETWORK INFO</b>\n"\
-                       f"Total Users: {total_users} User\n" \
-                       f"Usage (Today): {usage_today}\n" \
-                       f"Online (Now): {online_last_5min} User\n" \
-                       f"Now Network Received: {formatted_bytes_recv}\n" \
-                       f"Now Network Sent: {formatted_bytes_sent}\n" \
-                       f"Online (Today): {online_today} User\n" \
-                       f"Online(30 Days): {online_last_30_days} User\n" \
-                       f"Usage(30 Days): {usage_last_30_days}\n"\
-                       f"Total Download (Server): {total_download_server:.2f} GB\n" \
-                       f"Total Upload (Server): {total_upload_server:.2f} GB\n" \
+        f"<b>SYSTEM INFO</b>\n"\
+        f"CPU: {cpu_percent}% - {number_of_cores} CORE\n" \
+        f"RAM: {ram_used:.2f} GB / {ram_total:.2f} GB ({ram_percent:.2f}%)\n" \
+        f"DISK: {disk_used:.2f} GB / {disk_total:.2f} GB  ({disk_percent:.2f}%)\n\n" \
+        f"<b>NETWORK INFO</b>\n"\
+        f"Total Users: {total_users} User\n" \
+        f"Usage (Today): {usage_today}\n" \
+        f"Online (Now): {online_last_5min} User\n" \
+        f"Now Network Received: {formatted_bytes_recv}\n" \
+        f"Now Network Sent: {formatted_bytes_sent}\n" \
+        f"Online (Today): {online_today} User\n" \
+        f"Online(30 Days): {online_last_30_days} User\n" \
+        f"Usage(30 Days): {usage_last_30_days}\n"\
+        f"Total Download (Server): {total_download_server:.2f} GB\n" \
+        f"Total Upload (Server): {total_upload_server:.2f} GB\n" \
+
+
 
 def get_server_status(server_row):
     server_name = server_row['title']
@@ -176,4 +186,3 @@ def get_server_status(server_row):
         return False
     txt = server_status_template(data, server_name)
     return txt
-    
