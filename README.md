@@ -1,5 +1,5 @@
 ﻿# پشتیبانی از ورژن 10
-
+# کامل نشده
 <p align="center">
   <a href="https://github.com/m-mjd/Hiddify-Telegram-Bot" target="_blank" rel="noopener noreferrer">
     <picture>
