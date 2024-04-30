@@ -1,4 +1,6 @@
-﻿<p align="center">
+﻿# پشتیبانی از ورژن 10
+
+<p align="center">
   <a href="https://github.com/m-mjd/Hiddify-Telegram-Bot" target="_blank" rel="noopener noreferrer">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://github.com/m-mjd/Hiddify-Telegram-Bot/blob/main/Screenshots/icon.png?raw=True">
@@ -105,4 +107,3 @@ cd /opt/ && rm -rf /opt/Hiddify-Telegram-Bot/ && sudo bash -c "$(curl -Lfo- http
 ```bash
 cd /opt/Hiddify-Telegram-Bot/ && chmod +x uninstall.sh && ./uninstall.sh
 ```
-
