@@ -90,18 +90,13 @@ echo -e "${GREEN}Step 1: Cloning the repository and changing directory...${RESET
 repository_url="https://github.com/B3H1Z/Hiddify-Telegram-Bot.git"
 install_dir="/opt/Hiddify-Telegram-Bot"
 
-branch="main"
 
-if [ "$0" == "--pre-release" ]; then
-    branch="pre-release"
-fi
 
-echo "Selected branch: $branch"
 
 if [ -d "$install_dir" ]; then
   echo "Directory $install_dir exists."
 else
-  git clone -b "$branch" "$repository_url" "$install_dir" || display_error_and_exit "Failed to clone the repository."
+  git clone  "$repository_url" "$install_dir" || display_error_and_exit "Failed to clone the repository."
 fi
 
 cd "$install_dir" || display_error_and_exit "Failed to change directory."
